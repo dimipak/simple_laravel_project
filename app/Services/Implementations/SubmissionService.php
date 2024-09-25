@@ -2,39 +2,30 @@
 
 namespace App\Services\Implementations;
 
+use App\Bus\CommandBus;
+use App\Commands\CreateSubmissionCommand;
 use App\Http\Requests\CreateSubmissionRequest;
-use App\Jobs\CreateSubmissionJob;
-use App\Models\Submission;
-use App\Repositories\Interfaces\SubmissionRepositoryInterface;
 use App\Services\Interfaces\SubmissionServiceInterface;
 
 class SubmissionService implements SubmissionServiceInterface
 {
     /**
-     * @param  SubmissionRepositoryInterface  $submissionRepository
+     * @param  CommandBus  $commandBus
      */
     public function __construct(
-        protected SubmissionRepositoryInterface $submissionRepository
-    )
-    {}
+        protected CommandBus $commandBus
+    ) {}
 
     /**
      * @param  CreateSubmissionRequest  $createSubmissionRequest
-     * @return Submission
+     * @return void
      */
-    public function createSubmission(CreateSubmissionRequest $createSubmissionRequest): Submission
+    public function createSubmission(CreateSubmissionRequest $createSubmissionRequest): void
     {
-        return $this->submissionRepository->create($createSubmissionRequest->toArray());
-    }
-
-    /**
-     * @param  CreateSubmissionRequest  $createSubmissionRequest
-     * @return Submission
-     */
-    public function createSubmissionAsync(CreateSubmissionRequest $createSubmissionRequest): Submission
-    {
-        CreateSubmissionJob::dispatch($createSubmissionRequest->toArray());
-
-        return new Submission($createSubmissionRequest->toArray());
+        $this->commandBus->dispatch(new CreateSubmissionCommand(
+            name: $createSubmissionRequest->get('name'),
+            email: $createSubmissionRequest->get('email'),
+            message: $createSubmissionRequest->get('message'),
+        ));
     }
 }

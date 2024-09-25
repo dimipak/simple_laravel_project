@@ -2,6 +2,8 @@
 
 namespace App\Jobs;
 
+use App\Bus\CommandBus;
+use App\Commands\CreateSubmissionCommand;
 use App\Repositories\Interfaces\SubmissionRepositoryInterface;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -15,7 +17,7 @@ class CreateSubmissionJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(protected array $data)
+    public function __construct(protected CreateSubmissionCommand $command)
     {
         //
     }
@@ -23,9 +25,9 @@ class CreateSubmissionJob implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(SubmissionRepositoryInterface $submissionRepository): void
+    public function handle(CommandBus $bus): void
     {
-        $submissionRepository->create($this->data);
+        $bus->dispatch($this->command);
     }
 
     /**

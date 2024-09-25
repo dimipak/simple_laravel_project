@@ -7,7 +7,5 @@ use App\Models\Submission;
 
 interface SubmissionServiceInterface
 {
-    public function createSubmission(CreateSubmissionRequest $createSubmissionRequest): Submission;
-
-    public function createSubmissionAsync(CreateSubmissionRequest $createSubmissionRequest): Submission;
+    public function createSubmission(CreateSubmissionRequest $createSubmissionRequest): void;
 }

@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Bus\CommandBus;
+use App\Commands\CreateSubmissionCommand;
+use App\Commands\CreateSubmissionCommandHandler;
 use App\Repositories\Implementations\SubmissionRepository;
 use App\Repositories\Interfaces\SubmissionRepositoryInterface;
 use App\Services\Implementations\SubmissionService;
@@ -24,6 +27,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        $commandBus = app(CommandBus::class);
+
+        $commandBus->register([
+            CreateSubmissionCommand::class => CreateSubmissionCommandHandler::class
+        ]);
     }
 }
